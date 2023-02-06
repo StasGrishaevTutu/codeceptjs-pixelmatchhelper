@@ -389,15 +389,16 @@ class PixelmatchHelper extends Helper {
 	 *        Defaults to 'actual'.
 	 * @param {string} element - Optional. Selector of the element to
 	 *        screenshot, or empty to screenshot current viewport.
+	 * @param {boolean} fullPage - Optional. Flag to enable fullscreen screenshot mode.
 	 * @returns {Promise}
 	 */
-	async takeScreenshot(name, which, element) {
+	async takeScreenshot(name, which, element, fullPage) {
 		await this._setupTest(name);
 
 		if (element) {
 			await this._takeElementScreenshot(name, which, element);
 		} else {
-			await this._takeScreenshot(name, which);
+			await this._takeScreenshot(name, which, fullPage);
 		}
 	}
 
@@ -459,7 +460,7 @@ class PixelmatchHelper extends Helper {
 	 *        Defaults to 'actual'.
 	 * @private
 	 */
-	async _takeScreenshot(name, which) {
+	async _takeScreenshot(name, which, fullPage) {
 		const driver = this._getDriver();
 
 		// The output path where the screenshot is saved to.
@@ -471,8 +472,8 @@ class PixelmatchHelper extends Helper {
 		const uid = Math.random().toString(36).slice(-5);
 		const tempName = `~${uid}.temp`;
 
-		// Screenshot the current viewport into a temp file.
-		await driver.saveScreenshot(tempName);
+		// Screenshot the current or fullpage viewport into a temp file.
+		await driver.saveScreenshot(tempName, fullPage);
 		this._deleteFile(outputFile);
 
 		// Move the temp file to the correct folder and rename the file.
